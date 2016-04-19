@@ -230,6 +230,7 @@ type xmppGcmClient struct {
 	}
 	senderID string
 	isClosed bool
+	released chan bool
 }
 
 // An entry in the messages log, used to keep track of messages pending ack and
@@ -263,10 +264,26 @@ func newXmppGcmClient(senderID string, apiKey string) (*xmppGcmClient, error) {
 			m: make(map[string]*messageLogEntry),
 		},
 		senderID: senderID,
+		released: make(chan bool),
 	}
 
 	xmppClients.m[senderID] = xc
 	return xc, nil
+}
+
+func (c *xmppGcmClient) releaseClient() {
+	log.Printf("Releasing client for SenderID: %v", c.senderID)
+	// Set isClosed to 0 so we don't trigger an error when returning.
+	c.Lock()
+	c.XmppClient.Close()
+	c.isClosed = true
+	c.Unlock()
+
+	// Remove client from cache.
+	xmppClients.Lock()
+	delete(xmppClients.m, c.senderID)
+	xmppClients.Unlock()
+	c.released <- true
 }
 
 // xmppGcmClient implementation of listening for messages from CCS; the messages can be
@@ -276,28 +293,22 @@ func (c *xmppGcmClient) listen(h MessageHandler, stop <-chan bool) error {
 		go func() {
 			select {
 			case <-stop:
-				// Set isClosed to 0 so we don't trigger an error when returning.
-				c.Lock()
-				c.XmppClient.Close()
-				c.isClosed = true
-				c.Unlock()
-
-				// Remove client from cache.
-				xmppClients.Lock()
-				delete(xmppClients.m, c.senderID)
-				xmppClients.Unlock()
+				c.releaseClient()
+			case <-c.released:
 			}
 		}()
 	}
 	for {
 		stanza, err := c.XmppClient.Recv()
 		if err != nil {
-			c.RLock()
-			defer c.RUnlock()
 			// If client is closed we can't return without error.
 			if c.isClosed {
 				return nil
 			}
+			// This needs to be called here because the xmpp client sometimes gets stuck
+			// on an EOF position and doesn't reset. If the gcm client wants to reset connection
+			// here, then we should clean up and release all resources.
+			c.releaseClient()
 			// This is likely fatal, so return.
 			return fmt.Errorf("error on Recv>%v", err)
 		}
