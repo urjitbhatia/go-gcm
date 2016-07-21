@@ -371,7 +371,15 @@ func (c *xmppGcmClient) listen(h MessageHandler, stop <-chan bool) error {
 				// Upstream message: send ack and pass to listener.
 				ack := XmppMessage{To: cm.From, MessageId: cm.MessageId, MessageType: CCSAck}
 				c.send(ack)
-				go h(*cm)
+				var handlerErr error
+				go func() {
+					handlerErr = h(*cm)
+				}()
+				if handlerErr != nil {
+					// probably fatal - return
+					debug("Message handler returned error: %v", handlerErr)
+					return err
+				}
 			}
 		case "error":
 			debug("error response %v", v)
