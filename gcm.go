@@ -36,7 +36,7 @@ const (
 	CCSNack     = "nack"
 	CCSControl  = "control"
 	CCSReceipt  = "receipt"
-	httpAddress = "https://android.googleapis.com/gcm/send"
+	httpAddress = "https://gcm-http.googleapis.com/gcm/send"
 	xmppHost    = "gcm.googleapis.com"
 	xmppPort    = "5235"
 	xmppAddress = xmppHost + ":" + xmppPort
@@ -82,7 +82,7 @@ type HttpMessage struct {
 	Priority              string        `json:"priority,omitempty"`
 	ContentAvailable      bool          `json:"content_available,omitempty"`
 	DelayWhileIdle        bool          `json:"delay_while_idle,omitempty"`
-	TimeToLive            uint          `json:"time_to_live,omitempty"`
+	TimeToLive            *uint         `json:"time_to_live,omitempty"`
 	RestrictedPackageName string        `json:"restricted_package_name,omitempty"`
 	DryRun                bool          `json:"dry_run,omitempty"`
 	Data                  Data          `json:"data,omitempty"`
@@ -98,7 +98,7 @@ type XmppMessage struct {
 	Priority                 string        `json:"priority,omitempty"`
 	ContentAvailable         bool          `json:"content_available,omitempty"`
 	DelayWhileIdle           bool          `json:"delay_while_idle,omitempty"`
-	TimeToLive               uint          `json:"time_to_live,omitempty"`
+	TimeToLive               *uint         `json:"time_to_live,omitempty"`
 	DeliveryReceiptRequested bool          `json:"delivery_receipt_requested,omitempty"`
 	DryRun                   bool          `json:"dry_run,omitempty"`
 	Data                     Data          `json:"data,omitempty"`
@@ -112,7 +112,7 @@ type HttpResponse struct {
 	Failure      uint     `json:"failure,omitempty"`
 	CanonicalIds uint     `json:"canonical_ids,omitempty"`
 	Results      []Result `json:"results,omitempty"`
-	MessageId    uint     `json:"message_id,omitempty"`
+	MessageId    int     `json:"message_id,omitempty"`
 	Error        string   `json:"error,omitempty"`
 }
 
