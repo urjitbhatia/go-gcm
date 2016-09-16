@@ -112,7 +112,7 @@ type HttpResponse struct {
 	Failure      uint     `json:"failure,omitempty"`
 	CanonicalIds uint     `json:"canonical_ids,omitempty"`
 	Results      []Result `json:"results,omitempty"`
-	MessageId    int     `json:"message_id,omitempty"`
+	MessageId    int      `json:"message_id,omitempty"`
 	Error        string   `json:"error,omitempty"`
 }
 
@@ -589,7 +589,7 @@ func checkResults(gcmResults []Result, recipients []string, resultsState multica
 func SendXmpp(senderId, apiKey string, m XmppMessage) (string, int, error) {
 	c, err := newXmppGcmClient(senderId, apiKey)
 	if err != nil {
-		return "", 0, fmt.Errorf("error creating xmpp client>%v", err)
+		return "", 0, fmt.Errorf("SendXmpp: error creating xmpp client>%v", err)
 	}
 	return c.send(m)
 }
@@ -601,7 +601,7 @@ func SendXmpp(senderId, apiKey string, m XmppMessage) (string, int, error) {
 func Listen(senderId, apiKey string, h MessageHandler, stop <-chan bool) error {
 	cl, err := newXmppGcmClient(senderId, apiKey)
 	if err != nil {
-		return fmt.Errorf("error creating xmpp client>%v", err)
+		return fmt.Errorf("Listen: error creating xmpp client>%v", err)
 	}
 	return cl.listen(h, stop)
 }
