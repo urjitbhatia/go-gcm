@@ -293,11 +293,13 @@ func (c *xmppGcmClient) listen(h MessageHandler, stop <-chan bool) error {
 		go func() {
 			select {
 			case <-stop:
+				log.Printf("Stopping GCM listen for client: %s", c.senderID)
 				c.releaseClient()
 			case <-c.released:
 			}
 		}()
 	}
+	log.Printf("Listening to incoming messages for senderId: %s", c.senderID)
 	for {
 		stanza, err := c.XmppClient.Recv()
 		if err != nil {
@@ -358,6 +360,7 @@ func (c *xmppGcmClient) listen(h MessageHandler, stop <-chan bool) error {
 			switch cm.MessageType {
 			case CCSControl:
 				// TODO(silvano): create a new connection, drop the old one 'after a while'
+				log.Printf("GCM listen control message for SenderId: %s, message: %v", c.senderID, cm)
 				debug("control message! %v", cm)
 			case CCSReceipt:
 				debug("receipt! %v", cm)
@@ -603,6 +606,7 @@ func Listen(senderId, apiKey string, h MessageHandler, stop <-chan bool) error {
 	if err != nil {
 		return fmt.Errorf("Listen: error creating xmpp client>%v", err)
 	}
+	log.Printf("Created a new xmpp client for senderId: %v", senderId)
 	return cl.listen(h, stop)
 }
 
