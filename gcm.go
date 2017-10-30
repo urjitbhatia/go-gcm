@@ -144,18 +144,19 @@ type Data map[string]interface{}
 
 // The notification payload of a GCM message.
 type Notification struct {
-	Title        string `json:"title,omitempty"`
-	Body         string `json:"body,omitempty"`
-	Icon         string `json:"icon,omitempty"`
-	Sound        string `json:"sound,omitempty"`
-	Badge        string `json:"badge,omitempty"`
-	Tag          string `json:"tag,omitempty"`
-	Color        string `json:"color,omitempty"`
-	ClickAction  string `json:"click_action,omitempty"`
-	BodyLocKey   string `json:"body_loc_key,omitempty"`
-	BodyLocArgs  string `json:"body_loc_args,omitempty"`
-	TitleLocArgs string `json:"title_loc_args,omitempty"`
-	TitleLocKey  string `json:"title_loc_key,omitempty"`
+	Title             string `json:"title,omitempty"`
+	Body              string `json:"body,omitempty"`
+	Icon              string `json:"icon,omitempty"`
+	Sound             string `json:"sound,omitempty"`
+	Badge             string `json:"badge,omitempty"`
+	Tag               string `json:"tag,omitempty"`
+	Color             string `json:"color,omitempty"`
+	ClickAction       string `json:"click_action,omitempty"`
+	BodyLocKey        string `json:"body_loc_key,omitempty"`
+	BodyLocArgs       string `json:"body_loc_args,omitempty"`
+	TitleLocArgs      string `json:"title_loc_args,omitempty"`
+	TitleLocKey       string `json:"title_loc_key,omitempty"`
+	MutableContentIOS string `json:"mutable_content,omitempty"`
 }
 
 // MessageHandler is the type for a function that handles a CCS message.
