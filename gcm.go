@@ -156,7 +156,7 @@ type Notification struct {
 	BodyLocArgs       string `json:"body_loc_args,omitempty"`
 	TitleLocArgs      string `json:"title_loc_args,omitempty"`
 	TitleLocKey       string `json:"title_loc_key,omitempty"`
-	MutableContentIOS string `json:"mutable_content,omitempty"`
+	MutableContentIOS bool   `json:"mutable_content,omitempty"`
 }
 
 // MessageHandler is the type for a function that handles a CCS message.
